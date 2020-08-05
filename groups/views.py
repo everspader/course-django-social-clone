@@ -10,15 +10,15 @@ from groups import models
 
 class CreateGroup(LoginRequiredMixin, generic.CreateView):
     fields = ('name', 'description')
-    model = Group
+    model = models.Group
 
 
-class SingleGroup(generic.DeleteView):
-    model = Group
+class SingleGroup(generic.DetailView):
+    model = models.Group
 
 
 class ListGroups(generic.ListView):
-    model = Group
+    model = models.Group
 
 
 class JoinGroup(LoginRequiredMixin, generic.RedirectView):
@@ -27,10 +27,10 @@ class JoinGroup(LoginRequiredMixin, generic.RedirectView):
         return reverse('groups:single', kwargs={'slug': self.kwargs.get('slug')})
 
     def get(self, request, *args, **kwargs):
-        group = get_object_or_404(Group, slug=self.kwargs.get('slug'))
+        group = get_object_or_404(models.Group, slug=self.kwargs.get('slug'))
 
         try:
-            GroupMember.objects.create(user=self.request.user, group=group)
+            models.GroupMember.objects.create(user=self.request.user, group=group)
         except IntegrityError:
             messages.warning(self.request,'Warning! Already a member!')
         else:
